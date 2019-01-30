@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CityPipe } from './pipes/city.pipe';
 
 @NgModule({
@@ -9,10 +9,12 @@ import { CityPipe } from './pipes/city.pipe';
   ],
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     FormsModule,
+    ReactiveFormsModule,
     CityPipe
   ]
 })

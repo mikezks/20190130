@@ -27,6 +27,10 @@
         *ngIf="selected"
         (click)="deselect()">
         Deselect</button>
+      <button
+        class="btn btn-default"
+        [routerLink]="['/flight-booking/flight-edit', item.id, { showDetails: true }]">
+        Edit</button>
     </p>
   </div>
 </div>

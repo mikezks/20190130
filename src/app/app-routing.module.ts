@@ -15,10 +15,6 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'flight-booking/flight-search',
-    component: FlightSearchComponent
-  },
-  {
     path: '**',
     redirectTo: 'home'
   }
