@@ -6,12 +6,14 @@ import { SharedModule } from '../shared/shared.module';
 import { FlightCardComponent } from './flight-card/flight-card.component';
 import { FlightBookingRoutingModule } from './flight-booking-routing.module';
 import { FlightEditComponent } from './flight-edit/flight-edit.component';
+import { FlightTypeaheadComponent } from './flight-typeahead/flight-typeahead.component';
 
 @NgModule({
   declarations: [
     FlightSearchComponent,
     FlightCardComponent,
-    FlightEditComponent
+    FlightEditComponent,
+    FlightTypeaheadComponent
   ],
   imports: [
     CommonModule,

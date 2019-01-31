@@ -1,0 +1,8 @@
+<ng-container *ngIf="{ value: (timer$ | async) } as timer">
+  <p>
+    timer value: {{ timer.value }}
+  </p>
+  <p>
+    timer2 value: {{ timer.value }}
+  </p>
+</ng-container>
