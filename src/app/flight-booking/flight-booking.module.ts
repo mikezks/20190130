@@ -7,6 +7,10 @@ import { FlightCardComponent } from './flight-card/flight-card.component';
 import { FlightBookingRoutingModule } from './flight-booking-routing.module';
 import { FlightEditComponent } from './flight-edit/flight-edit.component';
 import { FlightTypeaheadComponent } from './flight-typeahead/flight-typeahead.component';
+import { StoreModule } from '@ngrx/store';
+import * as fromFlightBooking from './+state/reducers/flight-booking.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { FlightBookingEffects } from './+state/effects/flight-booking.effects';
 
 @NgModule({
   declarations: [
@@ -18,7 +22,9 @@ import { FlightTypeaheadComponent } from './flight-typeahead/flight-typeahead.co
   imports: [
     CommonModule,
     FlightBookingRoutingModule,
-    SharedModule
+    SharedModule,
+    StoreModule.forFeature('flightBooking', fromFlightBooking.reducer),
+    EffectsModule.forFeature([FlightBookingEffects])
   ]
 })
 export class FlightBookingModule { }

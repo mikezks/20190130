@@ -9,7 +9,7 @@
       "projectType": "application",
       "prefix": "app",
       "schematics": {
-        "@schematics/angular:component": {
+        "@ngrx/schematics:component": {
           "style": "scss"
         }
       },
@@ -135,5 +135,8 @@
       }
     }
   },
-  "defaultProject": "flightapp"
+  "defaultProject": "flightapp",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }
