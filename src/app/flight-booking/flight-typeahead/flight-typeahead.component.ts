@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { timer, Observable, Subscription, Subject } from 'rxjs';
-import { tap, take, map, share, takeUntil } from 'rxjs/operators';
+import { tap, take, map, share, takeUntil, debounceTime, switchMap, filter, distinctUntilChanged, delay } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
+import { Flight } from 'src/app/entities/flight';
+import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-flight-typeahead',
@@ -12,10 +15,38 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
   subscriptionTimer: Subscription;
   destroy$ = new Subject<boolean>();
 
-  constructor() { }
+  control = new FormControl();
+  flights$: Observable<Flight[]>;
+  loading: boolean;
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit() {
     //this.rxjsDemo();
+
+    this.flights$ =
+      this.control.valueChanges
+        .pipe(
+          filter((value: string) => value.length >= 3),
+          debounceTime(300),
+          distinctUntilChanged(),
+          tap(() => this.loading = true),
+          switchMap(value => this.load$(value)),
+          delay(5000),
+          tap(() => this.loading = false)
+        );
+  }
+
+  load$(from: string): Observable<Flight[]>  {
+    const url = 'http://www.angular.at/api/flight';
+
+    const params = new HttpParams()
+                        .set('from', from);
+
+    const headers = new HttpHeaders()
+                        .set('Accept', 'application/json');
+
+    return this.http.get<Flight[]>(url, {params, headers});
   }
 
   rxjsDemo(): void {
