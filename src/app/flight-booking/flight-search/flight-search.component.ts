@@ -5,7 +5,8 @@ import { FlightService } from '../services/flight.service';
 import * as fromFlightBooking from '../+state/reducers/flight-booking.reducer';
 import { Store, select } from '@ngrx/store';
 import { Observable, pipe } from 'rxjs';
-import { FlightsLoadedAction } from '../+state/actions/flight-booking.actions';
+import { FlightsLoadedAction, FlightUpdateAction, FlightsLoadAction } from '../+state/actions/flight-booking.actions';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-flight-search',
@@ -26,11 +27,10 @@ export class FlightSearchComponent implements OnInit {
   };
 
   constructor(
-    private flightService: FlightService,
     private store: Store<{ flightBooking: fromFlightBooking.State}>) { }
 
   ngOnInit() {
-    this.flights = this.flightService.flights;
+    //this.flights = this.flightService.flights;
     this.flights$ = this.store
       .pipe(
         select(s => s.flightBooking.flights)
@@ -38,7 +38,7 @@ export class FlightSearchComponent implements OnInit {
   }
 
   search(): void {
-    this.flightService
+    /* this.flightService
       .find(this.from, this.to)
       .subscribe(
         (flights: Flight[]) => {
@@ -50,11 +50,28 @@ export class FlightSearchComponent implements OnInit {
         (errResp) => {
           console.log('Error loading flights', errResp);
         }
-      );
+      ); */
+
+      this.store.dispatch(new FlightsLoadAction(this.from, this.to));
   }
 
   select(f: Flight) {
     this.selectedFlight = f;
   }
 
+  delay(): void {
+    this.flights$
+      .pipe(
+        take(1)
+      )
+      .subscribe(flights => {
+        const flight = flights[0];
+
+        const oldDate = new Date(flight.date);
+        const newDate = new Date(oldDate.getTime() + 15 * 60 * 1000);
+        const newFlight = { ...flight, date: newDate.toISOString() };
+
+        this.store.dispatch(new FlightUpdateAction(newFlight));
+      });
+  }
 }
