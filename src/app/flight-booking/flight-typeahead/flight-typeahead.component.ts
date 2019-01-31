@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { timer, Observable, Subscription, Subject } from 'rxjs';
-import { tap, take, map, share, takeUntil, debounceTime, switchMap, filter, distinctUntilChanged, delay } from 'rxjs/operators';
+import { timer, Observable, Subscription, Subject, combineLatest, interval } from 'rxjs';
+import { tap, take, map, share, takeUntil, debounceTime, switchMap, filter, distinctUntilChanged, delay, startWith } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { Flight } from 'src/app/entities/flight';
 import { HttpParams, HttpHeaders, HttpClient } from '@angular/common/http';
@@ -18,23 +18,39 @@ export class FlightTypeaheadComponent implements OnInit, OnDestroy {
   control = new FormControl();
   flights$: Observable<Flight[]>;
   loading: boolean;
+  online: boolean;
+  online$: Observable<boolean>;
 
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
     //this.rxjsDemo();
 
+    this.online$ = interval(2000).pipe(
+      startWith(0),
+      map(x => Math.random() < 0.5),
+      distinctUntilChanged(),
+      tap(x => this.online = x)
+    );
+
     this.flights$ =
-      this.control.valueChanges
-        .pipe(
-          filter((value: string) => value.length >= 3),
-          debounceTime(300),
-          distinctUntilChanged(),
-          tap(() => this.loading = true),
-          switchMap(value => this.load$(value)),
-          delay(5000),
-          tap(() => this.loading = false)
-        );
+      combineLatest(
+        this.control
+          .valueChanges
+            .pipe(
+              debounceTime(300),
+              filter(value => value.length >= 3 )
+            ),
+        this.online$
+      )
+      .pipe(
+        filter(([value, onlineState]) => onlineState),
+        map(([value, onlineState]) => value),
+        distinctUntilChanged(),
+        tap(() => this.loading = true),
+        switchMap(from => this.load$(from)),
+        tap(() => this.loading = false)
+      );
   }
 
   load$(from: string): Observable<Flight[]>  {
