@@ -20,7 +20,7 @@ import { AppEffects } from './+state/effects/app.effects';
   imports: [
     BrowserModule,
     HttpClientModule,
-    FlightBookingModule,
+    // FlightBookingModule, <-- important for Lazy Loading
     AppRoutingModule,
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

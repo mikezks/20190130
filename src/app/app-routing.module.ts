@@ -15,6 +15,10 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
+    path: 'flight-booking',
+    loadChildren: './flight-booking/flight-booking.module#FlightBookingModule'
+  },
+  {
     path: '**',
     redirectTo: 'home'
   }

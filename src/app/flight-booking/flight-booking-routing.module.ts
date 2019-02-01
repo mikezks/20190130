@@ -6,7 +6,7 @@ import { FlightTypeaheadComponent } from './flight-typeahead/flight-typeahead.co
 
 const routes: Routes = [
   {
-    path: 'flight-booking',
+    path: '',
     children: [
       {
         path: 'flight-search',
