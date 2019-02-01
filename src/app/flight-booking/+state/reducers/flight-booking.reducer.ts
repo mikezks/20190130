@@ -1,7 +1,6 @@
 
 import { FlightBookingActions, FlightBookingActionTypes } from '../actions/flight-booking.actions';
 import { Flight } from '../../../entities/flight';
-import { stat } from 'fs';
 
 export interface State {
   flights: Flight[];

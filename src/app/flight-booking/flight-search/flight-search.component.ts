@@ -7,6 +7,7 @@ import { Store, select } from '@ngrx/store';
 import { Observable, pipe } from 'rxjs';
 import { FlightsLoadedAction, FlightUpdateAction, FlightsLoadAction } from '../+state/actions/flight-booking.actions';
 import { take } from 'rxjs/operators';
+import { getFlights, getSumDelayedFlights } from '../+state/selectors/flight-booking.selectors';
 
 @Component({
   selector: 'app-flight-search',
@@ -20,6 +21,7 @@ export class FlightSearchComponent implements OnInit {
   flights: Flight[] = [];
   selectedFlight: Flight;
   flights$: Observable<Flight[]>;
+  delayedFlights$: Observable<number>;
 
   basket: object = {
     3: true,
@@ -27,32 +29,40 @@ export class FlightSearchComponent implements OnInit {
   };
 
   constructor(
-    private store: Store<{ flightBooking: fromFlightBooking.State}>) { }
+    private flightService: FlightService,
+    private store: Store<fromFlightBooking.State>) { }
 
   ngOnInit() {
     //this.flights = this.flightService.flights;
     this.flights$ = this.store
       .pipe(
-        select(s => s.flightBooking.flights)
+        select(getFlights)
+      );
+    this.delayedFlights$ = this.store
+      .pipe(
+        select(getSumDelayedFlights)
       );
   }
 
   search(): void {
-    /* this.flightService
+    this.store.dispatch(new FlightsLoadAction(this.from, this.to));
+  }
+
+  searchWithService(): void {
+    if (!this.from || !this.to) {
+      return;
+    }
+
+    this.flightService
       .find(this.from, this.to)
       .subscribe(
         (flights: Flight[]) => {
-          // this.flights = flights;
-          this.store.dispatch(
-            new FlightsLoadedAction(flights)
-          );
+          this.flights = flights;
         },
         (errResp) => {
           console.log('Error loading flights', errResp);
         }
-      ); */
-
-      this.store.dispatch(new FlightsLoadAction(this.from, this.to));
+      );
   }
 
   select(f: Flight) {
@@ -69,7 +79,11 @@ export class FlightSearchComponent implements OnInit {
 
         const oldDate = new Date(flight.date);
         const newDate = new Date(oldDate.getTime() + 15 * 60 * 1000);
-        const newFlight = { ...flight, date: newDate.toISOString() };
+        const newFlight = {
+          ...flight,
+          date: newDate.toISOString(),
+          delayed: true
+        };
 
         this.store.dispatch(new FlightUpdateAction(newFlight));
       });

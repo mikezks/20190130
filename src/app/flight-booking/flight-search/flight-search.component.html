@@ -23,6 +23,11 @@
           [(ngModel)]="to">
       </div>
 
+      <div>
+        Delayed Flights: {{ delayedFlights$ | async }}
+      </div>
+      <br>
+
       <div class="form-group">
         <button
           class="btn btn-default"
